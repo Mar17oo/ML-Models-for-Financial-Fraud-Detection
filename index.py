@@ -8,8 +8,9 @@ from sklearn.metrics import (precision_score, recall_score, f1_score,
                              roc_auc_score, average_precision_score,
                              confusion_matrix, precision_recall_curve)
 from imblearn.over_sampling import SMOTE   # pip install imbalanced-learn
-
 from supportVectorMachine_Model import run_svm_models
+from randomForestModel import run_random_forest_models
+from neuralNetworkModel import run_neural_network
 
 
 # 1. Load and inspect
@@ -113,6 +114,9 @@ proba_sm = evaluate(logreg_sm, X_val_scaled, y_val, "LogReg + SMOTE (val)")
 # ---- Strategy C: SVMs (Linear + RBF), from supportVectorMachine_Model.py ----
 svm_results = run_svm_models(X_train_scaled, y_train, X_val_scaled, y_val, evaluate)
 
+# ---- Strategy D: Random Forest (unscaled features), from randomForestModel.py ----
+rf_results = run_random_forest_models(X_train, y_train, X_val, y_val)
+
 # ---- Threshold tuning for the winning model (class weights) ----
 # Use the class-weights model's validation probabilities (the winner)
 proba_val = logreg_cw.predict_proba(X_val_scaled)[:, 1]
@@ -148,3 +152,4 @@ plt.title("Precision-Recall curve (LogReg, validation)")
 plt.grid(True, alpha=0.3)
 plt.savefig("pr_curve_logreg.png", dpi=120, bbox_inches="tight")
 plt.show()
+proba_nn = run_neural_network(X_train_scaled, y_train, X_val_scaled, y_val)
